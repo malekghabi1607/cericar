@@ -6,18 +6,18 @@ use Yii;
 use yii\db\ActiveRecord;
 
 /**
- * This is the model class for table "fredouil.marquevehicule".
+ * Modèle ActiveRecord pour la table "fredouil.marquevehicule".
  *
  * @property int $id
  * @property string $marquev
  *
  * Relations :
- * @property Voyage[] $voyages
+ * @property Voyage[] $voyages  Liste des voyages utilisant cette marque
  */
 class Marquevehicule extends ActiveRecord
 {
     /**
-     * Nom de la table PostgreSQL (avec schéma)
+     * Nom de la table PostgreSQL (avec son schéma)
      */
     public static function tableName()
     {
@@ -25,7 +25,7 @@ class Marquevehicule extends ActiveRecord
     }
 
     /**
-     * Règles de validation
+     * Règles de validation du modèle
      */
     public function rules()
     {
@@ -36,7 +36,7 @@ class Marquevehicule extends ActiveRecord
     }
 
     /**
-     * Labels des attributs
+     * Labels des attributs utilisés dans les formulaires
      */
     public function attributeLabels()
     {
@@ -47,8 +47,8 @@ class Marquevehicule extends ActiveRecord
     }
 
     /**
-     * Relation :
-     * Une marque peut être utilisée dans plusieurs voyages
+     * Relation AR :
+     * Une marque de véhicule peut être liée à plusieurs voyages
      */
     public function getVoyages()
     {

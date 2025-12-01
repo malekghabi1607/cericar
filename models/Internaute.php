@@ -2,12 +2,10 @@
 
 namespace app\models;
 
-use Yii;
 use yii\db\ActiveRecord;
 
 /**
- * This is the model class for table "fredouil.internaute".
- *
+ * Modèle pour la table "fredouil.internaute".
  * @property int $id
  * @property string $pseudo
  * @property string $pass
@@ -16,88 +14,49 @@ use yii\db\ActiveRecord;
  * @property string $mail
  * @property string $photo
  * @property int|null $permis
- *
- * Attributs supplémentaires non persistants (UML)
- * @property string|null $telephone
- * @property string|null $adresse
- * @property string|null $dateInscription
  */
 class Internaute extends ActiveRecord
 {
-    /**
-     * Nom de la table PostgreSQL (avec le schéma)
-     */
+    // Nom de la table dans la base PostgreSQL "fredouil"
     public static function tableName()
     {
         return 'fredouil.internaute';
     }
 
-    /**
-     * Attributs supplémentaires du modèle (non dans la BD)
-     * Ils sont déclarés ici pour les utiliser dans les vues / formulaires.
-     */
-    public $telephone;
-    public $adresse;
-    public $dateInscription;
-
-    /**
-     * Règles de validation
-     */
+    // Règles de validation des données
     public function rules()
     {
         return [
-            // Champs obligatoires venant de la BD
             [['pseudo', 'pass', 'nom', 'prenom', 'mail'], 'required'],
-
-            // Types numériques
             [['permis'], 'integer'],
-
-            // Types chaînes avec longueur max
+            [['mail'], 'email'],
             [['pseudo', 'pass', 'nom', 'prenom', 'mail'], 'string', 'max' => 45],
             [['photo'], 'string', 'max' => 200],
-
-            // Email
-            [['mail'], 'email'],
-
-            // Attributs UML (optionnels, non persistants)
-            [['telephone', 'adresse', 'dateInscription'], 'safe'],
         ];
     }
 
-    /**
-     * Labels des attributs : utilisé dans les formulaires
-     */
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'pseudo' => 'Pseudo',
-            'pass' => 'Mot de passe',
-            'nom' => 'Nom',
-            'prenom' => 'Prénom',
-            'mail' => 'Email',
-            'photo' => 'Photo de profil',
-            'permis' => 'Numéro de permis',
+    // --- RELATIONS (Pour éviter les requêtes SQL manuelles) ---
 
-            // Attributs UML
-            'telephone' => 'Téléphone',
-            'adresse' => 'Adresse',
-            'dateInscription' => 'Date d\'inscription',
-        ];
-    }
-
-    /**
-     * Relations : un internaute peut :
-     * - proposer plusieurs voyages
-     * - effectuer plusieurs réservations
-     */
+    // Un internaute (conducteur) propose plusieurs voyages
     public function getVoyages()
     {
         return $this->hasMany(Voyage::class, ['conducteur' => 'id']);
     }
 
+    // Un internaute (passager) a plusieurs réservations
     public function getReservations()
     {
         return $this->hasMany(Reservation::class, ['voyageur' => 'id']);
+    }
+
+    // --- MÉTHODES SPÉCIFIQUES DEMANDÉES PAR LE SUJET ---
+
+    /**
+     * Récupère un internaute selon son pseudo.
+     * [Source: 83] "getUserByIdentifiant"
+     */
+    public static function getUserByIdentifiant($pseudo)
+    {
+        return self::findOne(['pseudo' => $pseudo]);
     }
 }

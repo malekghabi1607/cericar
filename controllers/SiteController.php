@@ -8,16 +8,13 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use app\models\LoginForm;
-use app\models\ContactForm;
-use app\models\Produits;
-use app\models\MyUsers;
 
 class SiteController extends Controller
 {
     /**
-     * =====================================================
-     * COMPORTEMENTS GÉNÉRAUX DU CONTRÔLEUR
-     * =====================================================
+     * =============================
+     * COMPORTEMENTS (Behaviors)
+     * =============================
      */
     public function behaviors()
     {
@@ -28,24 +25,24 @@ class SiteController extends Controller
                 'rules' => [
                     [
                         'actions' => ['logout'],
-                        'allow'   => true,
-                        'roles'   => ['@'], // uniquement les utilisateurs connectés
+                        'allow' => true,
+                        'roles' => ['@'], // Seuls les utilisateurs connectés peuvent se déconnecter
                     ],
                 ],
             ],
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
-                    'logout' => ['post'], // logout uniquement en POST (sécurité)
+                    'logout' => ['post'], // La déconnexion doit se faire en POST
                 ],
             ],
         ];
     }
 
     /**
-     * =====================================================
-     * ACTIONS GÉNÉRIQUES DE YII (erreurs, captcha)
-     * =====================================================
+     * =============================
+     * ACTIONS STANDARDS YII
+     * =============================
      */
     public function actions()
     {
@@ -61,9 +58,9 @@ class SiteController extends Controller
     }
 
     /**
-     * =====================================================
-     * PAGE D’ACCUEIL
-     * =====================================================
+     * =============================
+     * PAGE D'ACCUEIL
+     * =============================
      */
     public function actionIndex()
     {
@@ -71,114 +68,40 @@ class SiteController extends Controller
     }
 
     /**
-     * =====================================================
-     * AUTHENTIFICATION (TP2)
-     * =====================================================
-     */
-
-    /**
-     * Page de connexion utilisateur
+     * =============================
+     * CONNEXION (Login)
+     * =============================
      */
     public function actionLogin()
     {
-        // Si déjà connecté, on retourne à l'accueil
+        // Si l'utilisateur est déjà connecté, on le redirige vers l'accueil
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
 
         $model = new LoginForm();
 
-        // Traitement du formulaire de connexion
+        // Si le formulaire est soumis et valide
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            // Message de bienvenue personnalisé
-            $username = ucfirst(Yii::$app->user->identity->username);
-            Yii::$app->session->setFlash('success', "Connexion réussie : Bienvenue $username !");
-            return $this->goHome();
+            Yii::$app->session->setFlash('success', "Connexion réussie !");
+            return $this->goBack();
         }
 
-        // Réinitialiser le champ mot de passe
+        // Sinon, on affiche le formulaire (et on efface le mot de passe par sécurité)
         $model->password = '';
-
-        // Affichage du formulaire
         return $this->render('login', [
             'model' => $model,
         ]);
     }
 
     /**
-     * Déconnexion (POST obligatoire)
+     * =============================
+     * DÉCONNEXION (Logout)
+     * =============================
      */
-    public function actionLogout(): Response
+    public function actionLogout()
     {
         Yii::$app->user->logout();
         return $this->goHome();
     }
-
-    /**
-     * =====================================================
-     * PAGES COMPLÉMENTAIRES
-     * =====================================================
-     */
-    public function actionContact()
-    {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
-            return $this->refresh();
-        }
-
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
-    }
-
-    public function actionAbout()
-    {
-        return $this->render('about');
-    }
-
-    /**
-     * =====================================================
-     * TP1 – MA PAGE PERSONNALISÉE
-     * =====================================================
-     */
-
-    /**
-     * Affiche la page “Ma Page”
-     * Message paramétrable via ?message=... et
-     * liste déroulante basée sur le modèle Produits
-     */
-    public function actionMapage($message = 'Hello World')
-    {
-        $produits = new Produits(); // instanciation du modèle
-
-        return $this->render('mapage', [
-            'message'  => $message,
-            'produits' => $produits, // on envoie l’objet à la vue
-        ]);
-    }
-
-
-
-public function actionTables()
-{
-    $tables = \Yii::$app->db->schema->getTableNames();
-
-    echo "<h1>Tables présentes dans la base :</h1>";
-    echo "<ul>";
-    foreach ($tables as $t) {
-        echo "<li>$t</li>";
-    }
-    echo "</ul>";
-}
-
-public function actionCheckSchema()
-{
-    try {
-        $schema = \Yii::$app->db->createCommand("SHOW search_path")->queryScalar();
-        echo "<h1>search_path = $schema</h1>";
-    } catch (\Exception $e) {
-        echo "<pre>" . $e->getMessage() . "</pre>";
-    }
-}
 }
