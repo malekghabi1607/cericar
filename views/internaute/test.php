@@ -64,7 +64,8 @@ $styleTd = "border: 1px solid #ddd; padding: 8px;";
                     <td style="<?= $styleTd ?>">
                         <strong>Départ :</strong> <?= $v->heuredepart ?>h00<br>
                         <strong>Places :</strong> <?= $v->nbplacedispo ?><br>
-                        <strong>Tarif :</strong> <?= $v->tarif ?> €/km
+                        <strong>tarif :</strong> <?= $v->tarif ?><br>
+                        <strong>Prix Total :</strong> <?= number_format($v->getPrixTotal(), 2) ?> €
                     </td>
                     <td style="<?= $styleTd ?>">
                         <?= $v->contraintes ? $v->contraintes : '-' ?>

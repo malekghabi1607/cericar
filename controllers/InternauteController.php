@@ -16,7 +16,7 @@ class InternauteController extends Controller
      */
     public function actionTest($pseudo = 'Fourmi')
     {
-        // 1. Utilisation de la méthode statique imposée par le sujet [Source: 83]
+        // 1. 
         $internaute = Internaute::getUserByIdentifiant($pseudo);
 
         // Gestion d'erreur si le pseudo n'existe pas
