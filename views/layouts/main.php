@@ -5,6 +5,13 @@ use app\assets\AppAsset;
 AppAsset::register($this);
 
 $this->beginPage();
+
+
+$this->registerJsFile(
+    '@web/js/recherche.js',
+    ['depends' => [\yii\web\JqueryAsset::class]]
+);
+
 ?>
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
@@ -19,6 +26,8 @@ $this->beginPage();
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
 </head>
@@ -28,6 +37,9 @@ $this->beginPage();
 
 <!-- HEADER -->
 <?= $this->render('header') ?>
+
+<!-- BANDEAU DE NOTIFICATION AJAX -->
+<div id="notification-bar" class="notification-bar" style="display:none;"></div>
 
 <!-- PAGE CONTENT -->
 <?= $content ?>
