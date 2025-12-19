@@ -10,114 +10,123 @@ use Yii;
 
 class VoyageController extends Controller
 {   
-    public function actionRecherche()
-    { 
-        //RÉCUPÉRATION DES PARAMÈTRES DE RECHERCHE
-        $vDepart = Yii::$app->request->get('depart');
-        $vArrivee = Yii::$app->request->get('arrivee');
-        $nbVoyageurs = Yii::$app->request->get('nb_pers');
+   public function actionRecherche()
+{
+    // Récupération des paramètres saoit du submit classique ou d une requete ajax envoyés par le formulaire
+    $vDepart = Yii::$app->request->get('depart');
+    $vArrivee = Yii::$app->request->get('arrivee');
+    $nbVoyageurs = Yii::$app->request->get('nb_pers');
 
-        // Recherche lancée 
+    // Validation de la recherche / ca empeche la recherche incomplete
+    $rechercheLancee = (
+        !empty($vDepart) &&
+        !empty($vArrivee) &&
+        !empty($nbVoyageurs)
+    );
 
-        // Une recherche est valide SI les trois champs ont été fournis.
-        $rechercheLancee = (
-            !empty($vDepart) &&
-            !empty($vArrivee) &&
-            !empty($nbVoyageurs)
-        );
+     // Initialisation des variables
+    $resultats = [];        // Résultats à afficher
+    $trajetExiste = false; // Sert pour les messages utilisateur
+    $voyages = [];         // Liste brute des voyages trouvés
 
-        // Initialiser un tableau vide qui contiendra tous les voyages trouvés + infos calculées.
-        $resultats = [];
+    //  Traitement métier
+    if ($rechercheLancee) {
 
-        // Indique si le trajet existe ou non
-        $trajetExiste = false;
+        $trajet = Trajet::getTrajet($vDepart, $vArrivee);
 
-         //  TRAITEMENT DE LA RECHERCHE (SI CRITÈRES VALIDES)
-        if ($rechercheLancee) {
+        if ($trajet) {
+            $trajetExiste = true;
+            // Récupération des voyages associés à ce trajet
+            $voyages = Voyage::getVoyagesByTrajetId($trajet->id);
 
-            // Recherche du trajet correspondant (départ → arrivée)
-            $trajet = Trajet::getTrajet($vDepart, $vArrivee);
-
-            // Si le trajet existe => on cherche les voyages
-            if ($trajet) {
-                $trajetExiste = true;
-
-                // Récupération de TOUS les voyages associés à ce trajet
-                $voyages = Voyage::getVoyagesByTrajetId($trajet->id);
-                
-                // traiter chaque voyage un par un
-                foreach ($voyages as $voyage) {
-
-                    // Si nbplacedispo < nbVoyageurs => on NE MONTRE PAS ce voyage
-                    if ($voyage->nbplacedispo < $nbVoyageurs) {
-                        continue;
-                    }
-
-                    //  CALCUL DES PLACES RÉSERVÉES DANS CE VOYAGE
-                    $placesReservees = Reservation::find()
-                        ->where(['voyage' => $voyage->id])
-                        //  ??0 Si sum() retourne null ( réservation), on met 0
-                        ->sum('nbplaceresa') ?? 0;
-
-                    // CALCUL DES PLACES RESTANTESaucune
-                    $placesRestantes = $voyage->nbplacedispo - $placesReservees;
-
-                    $estComplet = ($placesRestantes == 0);
-                    $pasAssezPourDemande = ($placesRestantes < $nbVoyageurs);
-                    $estDisponible = ($placesRestantes >= $nbVoyageurs);
-                    $coutTotal = $trajet->distance * $voyage->tarif * $nbVoyageurs;
-
-                    //  STOCKAGE DES DONNÉES POUR LA VUE
-                    $resultats[] = [
-                        'voyage' => $voyage,
-                        'places_restantes' => $placesRestantes,
-                        'pasAssezPourDemande' => $pasAssezPourDemande,
-                        'est_complet' => $estComplet,
-                        'est_disponible' => $estDisponible,
-                        'cout_total' => $coutTotal
-                    ];
+            foreach ($voyages as $voyage) {
+          // On ignore les voyages sans assez de places
+                if ($voyage->nbplacedispo < $nbVoyageurs) {
+                    continue;
                 }
+          // Calcul des places déjà réservées
+                $placesReservees = Reservation::find()
+                    ->where(['voyage' => $voyage->id])
+                    ->sum('nbplaceresa') ?? 0;
+        // Calcul des places restantes
+                $placesRestantes = $voyage->nbplacedispo - $placesReservees;
+       // Préparation des données pour la vue
+                $resultats[] = [
+                    'voyage' => $voyage,
+                    'places_restantes' => $placesRestantes,
+                    'pasAssezPourDemande' => ($placesRestantes < $nbVoyageurs),
+                    'est_complet' => ($placesRestantes == 0),
+                    'est_disponible' => ($placesRestantes >= $nbVoyageurs),
+                    'cout_total' => $trajet->distance * $voyage->tarif * $nbVoyageurs
+                ];
             }
         }
+    }
 
-        //MODE AJAX — RENVOI JSON (SANS LAYOUT, SANS PAGE COMPLÈTE)
-        if (Yii::$app->request->isAjax) {
-            // On génère uniquement la vue partielle "_resultats.php"
-            $html = $this->renderPartial('_resultats', [
-                'resultats' => $resultats,
-                'rechercheLancee' => $rechercheLancee,
-                'vDepart' => $vDepart,
-                'vArrivee' => $vArrivee,
-                'nbVoyageurs' => $nbVoyageurs,
-            ]);
+    // MODE AJAX — RENVOI JSON (SANS LAYOUT)
+if (Yii::$app->request->isAjax) {
+  // Génération du HTML des résultats uniquement (sans layout)
+    $html = $this->renderPartial('_resultats', [
+        'resultats' => $resultats,
+        'rechercheLancee' => $rechercheLancee,
+        'vDepart' => $vDepart,
+        'vArrivee' => $vArrivee,
+        'nbVoyageurs' => $nbVoyageurs,
+    ]);
 
-            // Message à afficher dans le bandeau de notification du layout
-            if (!$rechercheLancee) {
-                $message = "Veuillez saisir vos critères";
-            } elseif (!$trajetExiste) {
-                $message = "Ce trajet n’existe pas";
-            } elseif (empty($resultats)) {
-                $message = "Aucun voyage trouvé";
-            } else {
-                $message = "Recherche terminée";
-            }
+     // Messages personnalisés pour le bandeau de notification
+        if (!$rechercheLancee) {
 
-            // Réponse JSON envoyée à jQuery
-            return $this->asJson([
-                'html' => $html,
-                'message' => $message,
-            ]);
+            $message = "Merci de compléter tous les champs pour lancer la recherche.";
+            $type = "warning";
+
+        } elseif (!$trajetExiste) {
+
+            $message = "Aucun trajet enregistré entre {$vDepart} et {$vArrivee}.";
+            $type = "error";
+
+        } elseif ($trajetExiste && empty($voyages)) {
+
+            $message = "Des trajets existent entre {$vDepart} et {$vArrivee}, mais aucun voyage n’est proposé pour le moment.";
+            $type = "info";
+
+        } elseif (!empty($voyages) && empty($resultats)) {
+
+            $message = "Des voyages existent, mais aucun ne dispose d’assez de places pour {$nbVoyageurs} voyageur(s).";
+            $type = "warning";
+
+        } elseif (count($resultats) === 1) {
+
+            $message = "Un voyage correspondant à votre recherche est disponible.";
+            $type = "success";
+
+        } else {
+
+            $message = count($resultats) . " voyages correspondent à votre recherche.";
+            $type = "success";
         }
+   // Réponse JSON envoyée au JavaScript
+        return $this->asJson([
+            'html' => $html,
+            'message' => $message,
+            'type' => $type,
+        ]);
+    
 
-        //MODE NORMAL __ AFFICHAGE PAGE COMPLÈTE (LAYOUT + VUE)
-        return $this->render('recherche', [
-            'resultats' => $resultats,
-            'rechercheLancee' => $rechercheLancee,
-            'vDepart' => $vDepart,
-            'vArrivee' => $vArrivee,
-            'nbVoyageurs' => $nbVoyageurs,
+        return $this->asJson([
+            'html' => $html,
+            'message' => $message,
+            'type' => $type,
         ]);
     }
 
-
+    // MODE NORMAL
+    return $this->render('recherche', [
+        'resultats' => $resultats,
+        'rechercheLancee' => $rechercheLancee,
+        'vDepart' => $vDepart,
+        'vArrivee' => $vArrivee,
+        'nbVoyageurs' => $nbVoyageurs,
+    ]);
+}
 }
