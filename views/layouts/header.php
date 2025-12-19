@@ -7,7 +7,7 @@ use yii\helpers\Url;
 
 <!-- MENU LATERAL -->
 <div id="sideMenu" class="side-menu">
-    <a href="<?= Url::to(['search/index']) ?>">
+    <a href="<?= Url::to(['voyage/recherche']) ?>">
         <i class="fa-solid fa-car-side"></i> Rechercher un trajet
     </a>
     <a href="<?= Url::to(['site/proposer']) ?>">
@@ -18,9 +18,11 @@ use yii\helpers\Url;
 <header class="header">
     <div class="header-container">
 
-        <!-- LOGO -->
+       <!-- LOGO -->
         <div class="logo">
-            <img src="<?= Yii::getAlias('@web/img/logo.png') ?>" alt="Logo CERICar">
+            <a href="<?= Url::to(['site/index']) ?>">
+                <img src="<?= Yii::getAlias('@web/img/logo.png') ?>" alt="Logo CERICar">
+            </a>
         </div>
 
         <!-- NAV DESKTOP -->
@@ -29,7 +31,7 @@ use yii\helpers\Url;
                <i class="fa-solid fa-car-side"></i> Rechercher un trajet
            </a>
             <a href="<?= Url::to(['site/proposer']) ?>">
-                <i class="fa-solid fa-circle-plus"></i> Proposer
+                <i class="fa-solid fa-circle-plus"></i> Proposer un voyage
             </a>
         </nav>
 
