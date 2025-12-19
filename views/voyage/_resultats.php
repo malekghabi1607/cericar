@@ -7,94 +7,208 @@ use yii\helpers\Html;
 /* @var $vArrivee string */
 /* @var $nbVoyageurs int */
 ?>
+ <!-- On n’affiche rien tant que l’utilisateur n’a pas lancé une recherche
+	ca evite d’avoir une page vide ou des erreurs au chargement -->
+
 <?php if ($rechercheLancee): ?>
-   <!--  affiche le contexte de la recherche effectuée-->
-    <h3 class="result-title">
-        Résultats pour <?= Html::encode($vDepart) ?> → <?= Html::encode($vArrivee) ?>
-        (<?= Html::encode($nbVoyageurs) ?> pers.)
-    </h3>
-    
+
+    <!-- ===== CONTEXTE DE RECHERCHE ===== -->
+    <div class="result-context">
+        Trajets de <?= Html::encode($vDepart) ?> → <?= Html::encode($vArrivee) ?>
+        pour <?= Html::encode($nbVoyageurs) ?> voyageur(s).<br>
+        <strong><?= count($resultats) ?> trajet(s) trouvé(s).</strong>
+    </div>
+
     <?php if (empty($resultats)): ?>
-         <!-- Aucun voyage trouvé -->
+
         <div class="voyage-card no-result">
-            Aucun voyage direct trouvé pour ce trajet ou cette disponibilité.
+            Aucun voyage direct trouvé pour ce trajet.
         </div>
 
     <?php else: ?>
-         <!-- Boucle sur chaque voyage trouvé -->
-        <?php foreach ($resultats as $data): ?>
-            <!-- Raccourci pour accéder à l'objet voyage-->
-            <?php $voyage = $data['voyage']; ?>
 
-            <?php 
-            $cssClass = $data['est_complet']
-                ? 'complet'
-                : ($data['est_disponible'] ? 'disponible' : 'partiel');
+        <?php foreach ($resultats as $data): ?>
+            <?php
+                 // Récupération de l'objet Voyage       
+                $voyage = $data['voyage'];
+
+                //  Ces calculs sont faits côté vue car ils concernent uniquement l’affichage et respectent l’énoncé.
+
+                // ===== CALCULS CONFORMES À L’ÉNONCÉ (1 km = 1 minute selon l'énoncé) =====
+                $distance = $voyage->trajetInfo->distance; // km = minutes
+                $dureeMinutes = $distance;
+                $dureeHeures = floor($dureeMinutes / 60);
+                $dureeRestantes = $dureeMinutes % 60;
+
+                // Heure d’arrivée
+                $heureDepart = (int) $voyage->heuredepart;
+                $minutesArrivee = $heureDepart * 60 + $dureeMinutes;
+                $heureArrivee = floor(($minutesArrivee / 60) % 24);
+                $minuteArrivee = $minutesArrivee % 60;
+
+                // Classe CSS
+                $cssClass = $data['est_complet']
+                    ? 'complet'
+                    : ($data['est_disponible'] ? 'disponible' : 'partiel');
             ?>
 
+            <!-- ===== CARTE TRAJET (LISTE) ===== -->
             <div class="voyage-card <?= $cssClass ?>">
 
-                <h4 class="voyage-title">
-                    <?= Html::encode($voyage->trajetInfo->depart) ?>
-                    
-                    <?= Html::encode($voyage->trajetInfo->arrivee) ?>
-                </h4>
+                <!-- ===== LIGNE PRINCIPALE  ===== -->
+                <div class="voyage-line">
 
-                <div class="voyage-info">
-                    <p><strong>Voyage ID :</strong> <?= $voyage->id ?></p>
-                    <p><strong>Heure de départ :</strong> <?= $voyage->heuredepart ?>h</p>
-                    <p><strong>Places demandées :</strong> <?= Html::encode($nbVoyageurs) ?></p>
-                    <p><strong>Places restantes :</strong> <b><?= $data['places_restantes'] ?></b></p>
+                    <div class="heure-ville">
+                        <strong><?= $voyage->heuredepart ?>h</strong><br>
+                        <small><?= Html::encode($voyage->trajetInfo->depart) ?></small>
+                    </div>
+
+                    <div class="trajet-ligne">
+                        <span class="distance"><?= $distance ?> km</span><br>
+                        <span class="duree">
+                            Durée : <?= $dureeHeures ?>h<?= str_pad($dureeRestantes, 2, '0', STR_PAD_LEFT) ?>
+                        </span>
+                    </div>
+
+                    <div class="heure-ville">
+                        <strong><?= $heureArrivee ?>h<?= str_pad($minuteArrivee, 2, '0', STR_PAD_LEFT) ?></strong><br>
+                        <small><?= Html::encode($voyage->trajetInfo->arrivee) ?></small>
+                    </div>
+
+                    <div class="prix">
+                        <?= number_format($data['cout_total'], 2) ?> €
+                    </div>
+
                 </div>
 
+                <!-- ===== INFOS PLACES ===== -->
+                <div class="places-info">
+
+                    <span class="place-item">
+                        <i class="fa-solid fa-user"></i>
+                        Demandées : <strong><?= $nbVoyageurs ?></strong>
+                    </span>
+
+                    <span class="place-item">
+                        <i class="fa-solid fa-chair"></i>
+                        Totales : <strong><?= $voyage->nbplacedispo ?></strong>
+                    </span>
+
+                    <span class="place-item">
+                        <i class="fa-solid fa-check-circle"></i>
+                        Restantes : <strong><?= $data['places_restantes'] ?></strong>
+                    </span>
+
+                </div>
+
+                <!-- ===== STATUT ===== -->
                 <div class="voyage-status">
                     <?php if ($data['est_complet']): ?>
-
-                        <p class="etat complet">COMPLET – Impossible de réserver</p>
-
+                        <span class="etat complet">COMPLET</span>
                     <?php elseif ($data['pasAssezPourDemande']): ?>
-
-                        <p class="etat manque">Pas assez de places – Impossible de réserver</p>
-
-                    <?php elseif ($data['est_disponible']): ?>
-
-                        <p class="etat disponible">
-                            DISPONIBLE – Coût estimé :
-                            <?= number_format($data['cout_total'], 2) ?> €
-                        </p>
-
-                        <?php if (Yii::$app->session->has('user')): ?>
-
-                            <?= Html::a(
-                                'Réserver',
-                                ['voyage/reserver', 'idVoyage' => $voyage->id, 'nbPlaces' => $nbVoyageurs],
-                                ['class' => 'btn btn-success btn-sm btn-reserver']
-                            ) ?>
-
-                        <?php else: ?>
-
-                            <?= Html::a(
-                                'Connexion requise',
-                                ['auth/login'],
-                                ['class' => 'btn btn-warning btn-sm']
-                            ) ?>
-
-                        <?php endif; ?>
-
+                        <span class="etat manque">Places insuffisantes</span>
+                    <?php else: ?>
+                        <span class="etat disponible">Disponible</span>
                     <?php endif; ?>
                 </div>
 
+                <!-- ===== DÉTAILS AU CLIC ===== -->
+ 
                 <details class="voyage-details">
-                    <summary>Détails (Conducteur, Véhicule)</summary>
+                    <summary>Voir les détails</summary>
+
                     <div class="details-content">
-                        <p><strong>Conducteur :</strong> <?= Html::encode($voyage->conducteurInfo->pseudo) ?></p>
-                        <p><strong>Véhicule :</strong>
-                            <?= Html::encode($voyage->marqueVehicule->marquev) ?>
-                            <?= Html::encode($voyage->typeVehicule->typev) ?>
-                        </p>
-                        <p><strong>Contraintes :</strong>
-                            <?= Html::encode($voyage->contraintes) ?: 'Aucune contrainte spécifique.' ?>
-                        </p>
+
+                        <!-- ===== COLONNE GAUCHE : DÉTAILS DU VOYAGE ===== -->
+                        <div class="details-left">
+
+                            <div class="detail-item">
+                                <span class="icon"><i class="fa-solid fa-car"></i></span>
+                                <div>
+                                    <strong>ID Voyage</strong><br>
+                                    <?= $voyage->id ?>
+                                </div>
+                            </div>
+
+                            <div class="detail-item">
+                                <span class="icon"><i class="fa-solid fa-chair"></i></span>
+                                <div>
+                                    <strong>Places restantes</strong><br>
+                                    <?= $data['places_restantes'] ?>
+                                </div>
+                            </div>
+
+                            <div class="detail-item">
+                                <span class="icon"><i class="fa-solid fa-car-side"></i></span>
+                                <div>
+                                    <strong>Véhicule</strong><br>
+                                    <?= Html::encode($voyage->marqueVehicule->marquev) ?>
+                                    – <?= Html::encode($voyage->typeVehicule->typev) ?>
+                                </div>
+                            </div>
+
+                            <div class="detail-item">
+                                <span class="icon"><i class="fa-solid fa-suitcase"></i></span>
+                                <div>
+                                    <strong>Bagages</strong><br>
+                                    2 valises max
+                                </div>
+                            </div>
+
+                            <div class="detail-item">
+                                <span class="icon"><i class="fa-solid fa-triangle-exclamation"></i></span>
+                                <div>
+                                    <strong>Contraintes</strong><br>
+                                    <?= Html::encode($voyage->contraintes ?: 'Aucune') ?>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- ===== COLONNE DROITE : CONDUCTEUR ===== -->
+                        <div class="details-right">
+
+                            <div class="detail-item">
+                                <span class="icon"><i class="fa-solid fa-user"></i></span>
+                                <div>
+                                    <strong><?= Html::encode($voyage->conducteurInfo->pseudo) ?></strong><br>
+                                    Conducteur
+                                </div>
+                            </div>
+
+                            <div class="detail-item">
+                                <span class="icon"><i class="fa-solid fa-phone"></i></span>
+                                <div>
+                                    <strong>Téléphone</strong><br>
+                                    06 11 22 33 44
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- ===== RÉSERVATION ===== -->
+                        <div class="reservation-box">
+
+                            <div class="reservation-row">
+                                <div>
+                                    <label>Nombre de places à réserver</label>
+                                    <input type="number" value="<?= $nbVoyageurs ?>" readonly>
+                                </div>
+
+                                <div>
+                                    <label>Prix total</label>
+                                    <input type="text"
+                                        value="<?= number_format($data['cout_total'], 2) ?> €"
+                                        readonly>
+                                </div>
+                            </div>
+
+                            <button class="btn-reserver">
+                                RÉSERVER
+                            </button>
+
+                        </div>
+
                     </div>
                 </details>
 
@@ -106,6 +220,8 @@ use yii\helpers\Html;
 
 <?php else: ?>
 
-    <p class="info-init">Veuillez saisir vos critères pour lancer la recherche.</p>
+    <p class="info-init">
+    Veuillez saisir vos critères pour lancer la recherche.
+</p>
 
 <?php endif; ?>
