@@ -88,3 +88,7 @@ const observer = new IntersectionObserver((entries) => {
 });
 
 animatedElements.forEach(el => observer.observe(el));
+
+
+
+
