@@ -1,5 +1,11 @@
 <?php
 use yii\helpers\Url;
+
+$this->registerJsFile(
+    '@web/js/recherche.js',
+    ['depends' => [\yii\web\JqueryAsset::class]]
+);
+
 ?>
 
 <!-- ============================= -->
@@ -21,57 +27,12 @@ use yii\helpers\Url;
 </section>
 
 
-<!-- ============================= -->
-<!-- SECTION 2 : FORMULAIRE DE RECHERCHE -->
-<!-- ============================= -->
-<section class="search-box">
 
-    <form class="search-grid">
-
-        <!-- Ville de départ -->
-        <div class="input">
-            <i class="fa-solid fa-location-dot"></i>
-            <input type="text" placeholder="Ville de départ">
-        </div>
-
-        <!-- Ville d’arrivée -->
-        <div class="input">
-            <i class="fa-solid fa-flag"></i>
-            <input type="text" placeholder="Ville d’arrivée">
-        </div>
-
-        <!-- Date (demain par défaut + min=demain) -->
-        <div class="input">
-            <i class="fa-solid fa-calendar"></i>
-            <input type="text" id="dateInput" readonly>
-        </div>
- 
-        <!-- Nombre de voyageurs -->
-        <div class="input">
-            <i class="fa-solid fa-user-group"></i>
-            <input type="number" min="1" placeholder="Nombre de voyageurs">
-        </div>
-
-        <!-- Bouton rechercher -->
-        <button type="submit" class="btn-search">
-            <i class="fa-solid fa-magnifying-glass"></i> Rechercher
-        </button>
-
-    </form>
-
-    <!-- Checkbox en dessous et alignée à gauche 
-    <div class="checkbox-wrapper">
-        <label class="checkbox">
-            <input type="checkbox"> Accepter les correspondances
-        </label>
-    </div>-->
-
-</section>
 
 
 
 <!-- ============================= -->
-<!-- SECTION 3 : COMMENT ÇA MARCHE -->
+<!-- SECTION 2 : COMMENT ÇA MARCHE -->
 <!-- ============================= -->
 <section class="how-section-image">
     <h2 class="how-title">Comment ça marche ?</h2>
@@ -87,7 +48,7 @@ use yii\helpers\Url;
   </section> 
 
 <!-- ============================= -->
-<!-- SECTION 4 : AVANTAGES -->
+<!-- SECTION 3 : AVANTAGES -->
 <!-- ============================= -->
 <section class="avantages">
 
@@ -163,7 +124,7 @@ use yii\helpers\Url;
 
 
 <!-- ============================= -->
-<!-- SECTION 5: PROPOSER UN VOYAGE -->
+<!-- SECTION 4: PROPOSER UN VOYAGE -->
 <!-- ============================= -->
 <section class="proposer-voyage">
 
@@ -186,7 +147,7 @@ use yii\helpers\Url;
 </section>
 
 <!-- ============================= -->
-<!-- SECTION 6 : TRAJETS POPULAIRES -->
+<!-- SECTION 5 : TRAJETS POPULAIRES -->
 <!-- ============================= -->
 <section class="popular">
     <h2>Où souhaitez-vous aller ?</h2>
