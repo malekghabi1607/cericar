@@ -14,13 +14,13 @@ $config = [
     'components' => [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-            'cookieValidationKey' => '2ljczzxYfb1wCpXJrV89ZFfM6BnTETXn',
+            'cookieValidationKey' => '19gWrces2b2p-bb_g91P82sOVq4LO7yY',
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-            'identityClass' => 'app\models\User',
+            'identityClass' => 'app\models\Internaute',
             'enableAutoLogin' => true,
         ],
         'errorHandler' => [
@@ -42,6 +42,9 @@ $config = [
             ],
         ],
         'db' => $db,
+        'assetManager' => [
+            'forceCopy' => true,
+        ],
         /*
         'urlManager' => [
             'enablePrettyUrl' => true,
