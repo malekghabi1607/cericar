@@ -4,78 +4,68 @@ namespace app\models;
 
 use Yii;
 use yii\base\Model;
+use app\models\Internaute;
 
 /**
- * LoginForm is the model behind the login form.
- *
- * @property-read User|null $user
- *
+ * LoginForm
+ * Gère la connexion d’un internaute
  */
 class LoginForm extends Model
 {
-    public $username;
-    public $password;
-    public $rememberMe = true;
+    public $username;   // pseudo
+    public $password;   // mot de passe en clair
 
-    private $_user = false;
-
+    /** @var Internaute|null */
+    private $_user = null;
 
     /**
-     * @return array the validation rules.
+     * Règles de validation
      */
     public function rules()
     {
         return [
-            // username and password are both required
             [['username', 'password'], 'required'],
-            // rememberMe must be a boolean value
-            ['rememberMe', 'boolean'],
-            // password is validated by validatePassword()
             ['password', 'validatePassword'],
         ];
     }
 
     /**
-     * Validates the password.
-     * This method serves as the inline validation for password.
-     *
-     * @param string $attribute the attribute currently being validated
-     * @param array $params the additional name-value pairs given in the rule
+     * Vérifie le mot de passe
      */
     public function validatePassword($attribute, $params)
     {
-        if (!$this->hasErrors()) {
-            $user = $this->getUser();
+        if ($this->hasErrors()) {
+            return;
+        }
 
-            if (!$user || !$user->validatePassword($this->password)) {
-                $this->addError($attribute, 'Incorrect username or password.');
-            }
+        $user = $this->getUser();
+
+        if (!$user || $user->pass !== sha1($this->password)) {
+            $this->addError($attribute, 'Identifiant ou mot de passe incorrect.');
         }
     }
 
     /**
-     * Logs in a user using the provided username and password.
-     * @return bool whether the user is logged in successfully
+     * Connexion de l’utilisateur
      */
-    public function login()
-    {
-        if ($this->validate()) {
-            return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600*24*30 : 0);
-        }
-        return false;
+   public function login()
+{
+    if ($this->validate()) {
+        return Yii::$app->user->login($this->getUser());
     }
+    return false;
+}
+
+
 
     /**
-     * Finds user by [[username]]
-     *
-     * @return User|null
+     * Récupère l’internaute à partir du pseudo
      */
-    public function getUser()
-    {
-        if ($this->_user === false) {
-            $this->_user = User::findByUsername($this->username);
-        }
-
-        return $this->_user;
+  protected function getUser()
+{
+    if ($this->_user === null) {
+        $this->_user = User::findByPseudo($this->pseudo);
     }
+    return $this->_user;
+}
 }
