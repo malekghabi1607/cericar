@@ -12,7 +12,7 @@ use yii\db\ActiveRecord;
  *
  * @property Voyage[] $voyages
  */
-class Typevehicule extends ActiveRecord
+class TypeVehicule extends ActiveRecord
 {
     public static function tableName()
     {
