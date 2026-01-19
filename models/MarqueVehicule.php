@@ -14,7 +14,7 @@ use yii\db\ActiveRecord;
  * Relations :
  * @property Voyage[] $voyages  Liste des voyages utilisant cette marque
  */
-class Marquevehicule extends ActiveRecord
+class MarqueVehicule extends ActiveRecord
 {
     /**
      * Nom de la table PostgreSQL (avec son schéma)
