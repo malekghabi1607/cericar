@@ -1,16 +1,18 @@
 <?php
 use yii\helpers\Url;
+use yii\helpers\Html;
+
+// On récupère les données de session une seule fois
+$sessionInternaute = Yii::$app->session->get('internaute');
 ?>
 
-<!-- OVERLAY -->
 <div id="overlay" class="overlay" onclick="closeMenu()"></div>
 
-<!-- MENU LATERAL -->
 <div id="sideMenu" class="side-menu">
     <a href="<?= Url::to(['voyage/recherche']) ?>">
         <i class="fa-solid fa-car-side"></i> Rechercher un trajet
     </a>
-    <a href="<?= Url::to(['site/proposer']) ?>">
+    <a href="<?= Url::to(['voyage/create']) ?>">
         <i class="fa-solid fa-circle-plus"></i> Proposer un voyage
     </a>
 </div>
@@ -18,39 +20,45 @@ use yii\helpers\Url;
 <header class="header">
     <div class="header-container">
 
-       <!-- LOGO -->
-        <div class="logo">
+       <div class="logo">
             <a href="<?= Url::to(['site/index']) ?>">
                 <img src="<?= Yii::getAlias('@web/img/logo.png') ?>" alt="Logo CERICar">
             </a>
         </div>
 
-        <!-- NAV DESKTOP -->
         <nav class="nav">
            <a href="<?= Url::to(['voyage/recherche']) ?>">
                <i class="fa-solid fa-car-side"></i> Rechercher un trajet
            </a>
-            <a href="<?= Url::to(['site/proposer']) ?>">
+            <a href="<?= Url::to(['voyage/create']) ?>">
                 <i class="fa-solid fa-circle-plus"></i> Proposer un voyage
             </a>
         </nav>
 
-        <!-- ICONES A DROITE -->
         <div style="display:flex; align-items:center; gap:15px;">
             
-            <!-- BURGER MENU -->
             <div class="burger" onclick="openMenu()">
                 <i class="fa-solid fa-bars"></i>
             </div>
 
-            <!-- USER ICON -->
             <div class="user-icon">
-                <a href="<?= Url::to(['site/login']) ?>">
+
+            <?php if ($sessionInternaute): ?>
+                <div class="user-connected">
+                    <a href="<?= Url::to(['site/profil']) ?>" class="header-link">
+                        <i class="fa-solid fa-circle-user"></i>
+                    </a>
+                    <a href="<?= Url::to(['site/logout']) ?>" class="header-link logout-link">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </a>
+                </div>
+            <?php else: ?>
+                <a href="<?= Url::to(['site/login']) ?>" class="login-icon">
                     <i class="fa-solid fa-user"></i>
                 </a>
+            <?php endif; ?>
+
             </div>
-
         </div>
-
     </div>
 </header>
