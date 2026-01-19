@@ -7,16 +7,12 @@ AppAsset::register($this);
 $this->beginPage();
 
 
-$this->registerJsFile(
-    '@web/js/recherche.js',
-    ['depends' => [\yii\web\JqueryAsset::class]]
-);
-
 ?>
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
+    <?= Html::csrfMetaTags() ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet"
