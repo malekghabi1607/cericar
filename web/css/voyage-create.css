@@ -1,0 +1,111 @@
+:root {
+    --create-bg: #f3f6fb;
+    --create-card: #ffffff;
+    --create-border: #e5e7eb;
+    --create-text: #111827;
+    --create-muted: #6b7280;
+    --create-accent: #2563eb;
+    --create-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+}
+
+body {
+    background: var(--create-bg);
+}
+
+.voyage-create-page {
+    max-width: 1100px;
+    margin: 28px auto 70px;
+    padding: 0 16px;
+    color: var(--create-text);
+}
+
+.page-title {
+    text-align: center;
+    margin: 30px 0 24px;
+}
+
+.page-title h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 8px;
+}
+
+.page-subtitle {
+    font-size: 15px;
+    color: var(--create-muted);
+}
+
+.voyage-form-card {
+    background: var(--create-card);
+    border-radius: 16px;
+    padding: 20px 24px;
+    border: 1px solid var(--create-border);
+    box-shadow: var(--create-shadow);
+}
+
+.voyage-form-card.search-form-bg {
+    background: #f0f6fc;
+    border: 2px solid #c8ddf1;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px 18px;
+}
+
+.voyage-form-card .form-group label {
+    color: var(--create-muted);
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 13px;
+}
+
+.voyage-form-card .form-control,
+.voyage-form-card select,
+.voyage-form-card textarea {
+    background: #ffffff;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    padding: 10px 12px;
+    box-shadow: none;
+}
+
+.voyage-form-card textarea {
+    min-height: 120px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+}
+
+.btn-save,
+.btn-cancel {
+    border: 0;
+    border-radius: 10px;
+    padding: 10px 18px;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-save {
+    background: #5fa85b;
+    color: #fff;
+}
+
+.btn-save:hover {
+    background: #4d944a;
+}
+
+.btn-cancel {
+    background: transparent;
+    color: #374151;
+}
