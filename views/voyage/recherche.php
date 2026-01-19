@@ -6,8 +6,14 @@ $this->registerCssFile('@web/css/recherche.css');
 $this->registerJsFile(
     '@web/js/recherche.js',
     ['depends' => [\yii\web\JqueryAsset::class]]
+
 );
+
+
 ?>
+
+<?= Html::csrfMetaTags() ?>
+
 <!-- ===== TITRE DE LA PAGE ===== -->
 <div class="page-title">
     <h1>Recherche de trajet</h1>
@@ -67,9 +73,16 @@ $this->registerJsFile(
        ]) ?>
     </div>
 
-        <button type="submit" class="btn-search">
-            <i class="fa-solid fa-magnifying-glass"></i> Rechercher
-        </button>
+    <div class="search-options">
+        <label class="checkbox">
+            <?= Html::checkbox('with_correspondances', !empty($withCorrespondances), ['value' => 1]) ?>
+            <span>Accepter les correspondances</span>
+        </label>
+    </div>
+
+    <button type="submit" class="btn-search btn-search-full">
+        <i class="fa-solid fa-magnifying-glass"></i> Rechercher
+    </button>
 
     <?= Html::endForm() ?>
 
@@ -83,6 +96,8 @@ $this->registerJsFile(
 <div id="resultats-voyages" class="results-container">
     <?= $this->render('_resultats', [
         'resultats' => $resultats,
+        'correspondances' => $correspondances ?? [],
+        'withCorrespondances' => $withCorrespondances ?? false,
         'rechercheLancee' => $rechercheLancee,
         'vDepart' => $vDepart,
         'vArrivee' => $vArrivee,
