@@ -19,6 +19,16 @@ class Voyage extends ActiveRecord
         return 'fredouil.voyage';
     }
 
+    public function rules()
+    {
+        return [
+            [['trajet', 'idtypev', 'idmarquev', 'tarif', 'nbplacedispo', 'nbbagage', 'heuredepart'], 'required'],
+            [['trajet', 'idtypev', 'idmarquev', 'nbplacedispo', 'nbbagage', 'heuredepart'], 'integer'],
+            [['tarif'], 'number'],
+            [['contraintes'], 'string'],
+        ];
+    }
+
     // === Relations ===
 
     //Récupère l'Internaute qui propose ce voyage (le conducteur).
@@ -61,4 +71,10 @@ class Voyage extends ActiveRecord
     {
        return Reservation::findAll(['voyage' => $idVoyage]);
     }
+
+
+    public function getTrajet()
+{
+    return $this->hasOne(Trajet::class, ['id' => 'trajet']);
+}
 }
