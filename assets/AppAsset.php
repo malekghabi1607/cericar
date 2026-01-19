@@ -14,9 +14,11 @@ class AppAsset extends AssetBundle
 {
     public $basePath = '@webroot';
     public $baseUrl = '@web';
+    public $appendTimestamp = true;
 
     public $css = [
-        'css/site.css',   // ← TON CSS DOIT ÊTRE ICI
+        'css/site.css',   // ← TON CSS 
+         
     ];
 
     public $js = [
