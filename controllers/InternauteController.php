@@ -43,4 +43,23 @@ class InternauteController extends Controller
         $internautes = Internaute::find()->all();
         return $this->render('index', ['internautes' => $internautes]);
     }
+
+
+        /**
+     * INSCRIPTION D’UN NOUVEL INTERNAUTE
+     */
+    public function actionRegister()
+    {
+        $model = new \app\models\Internaute();
+        $model->scenario = 'register';
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['site/register-success']);
+        }
+
+        return $this->render('register', [
+            'model' => $model,
+        ]);
+    }
+
 }
