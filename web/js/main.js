@@ -56,23 +56,25 @@ document.addEventListener("DOMContentLoaded", () => {
 // Sélection du champ
 const dateInput = document.getElementById("dateInput");
 
-// Calcul de demain
-const today = new Date();
-today.setDate(today.getDate() + 1);
-const tomorrow = today.toLocaleDateString("fr-FR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric"
-});
+if (dateInput) {
+    // Calcul de demain
+    const today = new Date();
+    today.setDate(today.getDate() + 1);
 
-// On affiche demain
-dateInput.value = tomorrow;
+    const tomorrow = today.toLocaleDateString("fr-FR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric"
+    });
 
-// Empêche toute saisie clavier
-dateInput.addEventListener("keydown", function (e) {
-    e.preventDefault();
-});
+    // On affiche demain
+    dateInput.value = tomorrow;
 
+    // Empêche toute saisie clavier
+    dateInput.addEventListener("keydown", function (e) {
+        e.preventDefault();
+    });
+}
 
 // --- Animation d'apparition au scroll ---
 const animatedElements = document.querySelectorAll('.fadeUp');
@@ -89,6 +91,20 @@ const observer = new IntersectionObserver((entries) => {
 
 animatedElements.forEach(el => observer.observe(el));
 
-
-
-
+// ===============================
+//  AJAX GLOBAL + BANDEAU
+// ===============================
+function showNotification(type, message) {
+    const $bar = $("#notification-bar");
+    if (!$bar.length) {
+        return;
+    }
+    $bar
+        .removeClass()
+        .addClass("notification-bar " + (type || "info"))
+        .text(message || "")
+        .fadeIn(200);
+    setTimeout(() => {
+        $bar.fadeOut(300);
+    }, 5000);
+}
