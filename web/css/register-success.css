@@ -1,0 +1,74 @@
+/* ===== PAGE INSCRIPTION RÉUSSIE ===== */
+
+.success-page {
+    min-height: 70vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #f5f7fb;
+}
+
+.success-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 40px 50px;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    max-width: 420px;
+    width: 100%;
+}
+
+/* Icône succès */
+.success-icon {
+    width: 70px;
+    height: 70px;
+    background: #22c55e;
+    color: #ffffff;
+    border-radius: 50%;
+    font-size: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+}
+
+/* Titres */
+.success-card h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 10px;
+}
+
+.success-card p {
+    color: #6b7280;
+    font-size: 15px;
+    margin-bottom: 30px;
+}
+
+/* ===== BOUTON ===== */
+.btn-success {
+    display: inline-block;
+    background: #2563eb;
+    color: #ffffff !important;
+    padding: 14px 30px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none !important;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+/* HOVER FIXÉ */
+.btn-success:hover {
+    background: #1e4fd8;
+    color: #ffffff !important;
+    text-decoration: none !important;
+    transform: translateY(-1px);
+}
+
+/* CLICK */
+.btn-success:active {
+    transform: translateY(0);
+}
+
