@@ -21,7 +21,8 @@ Faciliter la recherche et la réservation de trajets entre utilisateurs, avec un
 ## Maquettes et visuels
 Extraits de la maquette réalisée pour le projet :
 
-![Landing Page](https://github.com/user-attachments/assets/e4cd75c1-7401-4ad4-ab52-a95cc27fda9b)
+![Landing Page](https://github.com/user-attachments/assets/06b4887b-2d42-4bd0-b702-6c0d55a67a99)
+
 ![search page](https://github.com/user-attachments/assets/556cc3b5-539e-4e37-847d-648e1ad6cdb7)
 ![search page](https://github.com/user-attachments/assets/2d1be2f1-36e4-4a1b-80ac-a81cde80b259)
 ![Propose Trip Page](https://github.com/user-attachments/assets/47a070aa-64b8-4257-8131-6dde1d958c6c)
