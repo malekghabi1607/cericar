@@ -21,12 +21,19 @@ Faciliter la recherche et la réservation de trajets entre utilisateurs, avec un
 ## Maquettes et visuels
 Extraits de la maquette réalisée pour le projet :
 
-![Landing Page](docs/maquette/Landing%20Page.jpg)
-![Search Page](docs/maquette/search%20page.jpg)
-![Propose Trip Page](docs/maquette/Propose%20Trip%20Page.jpg)
-![Login Page](docs/maquette/Login%20Page.jpg)
-![Register Page](docs/maquette/Register%20Page.jpg)
-![My Trips Page](docs/maquette/My%20Trips%20Page.jpg)
+![Landing Page](https://github.com/user-attachments/assets/e4cd75c1-7401-4ad4-ab52-a95cc27fda9b)
+![search page](https://github.com/user-attachments/assets/556cc3b5-539e-4e37-847d-648e1ad6cdb7)
+![search page](https://github.com/user-attachments/assets/2d1be2f1-36e4-4a1b-80ac-a81cde80b259)
+![Propose Trip Page](https://github.com/user-attachments/assets/47a070aa-64b8-4257-8131-6dde1d958c6c)
+![Login Page](https://github.com/user-attachments/assets/604db67d-13b9-4be2-8bfd-f6ef5a4a967d)
+![Register Page](https://github.com/user-attachments/assets/00524030-34fb-4ff7-ab47-be467769877f)
+![My profile](https://github.com/user-attachments/assets/f8e45d28-5da0-4d71-a4c4-e8b748e8c6ea)
+
+![About Page](https://github.com/user-attachments/assets/5693228b-7779-40c5-9a50-653f96dc8f5f)
+![help Page](https://github.com/user-attachments/assets/48b3fe7b-a4db-43fc-a63c-395e79d4b7d7)
+![How Page](https://github.com/user-attachments/assets/db66ba11-c28b-459e-8095-5206aad86b96)
+![legal Page](https://github.com/user-attachments/assets/f120f624-5ef3-4fd7-8767-9ebdedacbc8c)
+
 
 ## Stack technique
 - PHP 7.4+
