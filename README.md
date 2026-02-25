@@ -2,7 +2,7 @@
 
 CERICar est une application web de covoiturage développée en Yii2 (template basic) dans le cadre de la Licence 3 Informatique.
 
-![Logo CERICar](web/img/logo.png)
+![Logo CERICar](https://github.com/user-attachments/assets/9028343d-81fb-4fe8-a524-1ddb7290f4c0)
 
 ## Objectif
 Faciliter la recherche et la réservation de trajets entre utilisateurs, avec une interface claire et des interactions rapides grâce à l'AJAX.
